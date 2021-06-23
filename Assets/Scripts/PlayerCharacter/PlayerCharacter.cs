@@ -46,6 +46,9 @@ public class PlayerCharacter : LivingEntities
     private float currXMovement = 0;
     private float currYMovement = 0;
     private float currZMovement = 0;
+
+    [Header("Layer Masks")]
+    [SerializeField] private LayerMask dashLayerMask;
     [SerializeField] private LayerMask platformLayerMask;
 
     [Header("Ledge Grab Variables")]
@@ -81,10 +84,14 @@ public class PlayerCharacter : LivingEntities
     private SwingingState swingState;
     private LedgeGrabState ledgeGrabState;
     private ClimbingState climbingState;
+    private PlayerDeathState deathState;
+
 
     //Cached Variables
     [Header("Cached Variables")]
-    private Animator anim;
+    [SerializeField] private Animator armsAnim;
+    [SerializeField] private Animator legsAnim;
+    private GrenadeSpawner grenadeSpawner;
     private CharacterController controller;
     private Rigidbody body;
     private CapsuleCollider collider;
@@ -97,6 +104,18 @@ public class PlayerCharacter : LivingEntities
     public ArmorUI armor;
     [SerializeField] private bool isInvincible = false;
     public float IFrameDuration = 1f;
+
+    [Header("Sound FX")]
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip dashAudioClip;
+    [SerializeField] private AudioClip ledgeGrabAudioClip;
+    [SerializeField] private AudioClip swingAudioClip;
+    [SerializeField] private AudioClip jumpAudioClip;
+
+    [Header("Hands")]
+    
+    [SerializeField] private GameObject arms;
+
 
     #region Properties
     public AirState AirState { get => airState; }
@@ -124,7 +143,7 @@ public class PlayerCharacter : LivingEntities
     public Vector3 MoveDirection { get => moveDirection; set => moveDirection = value; }
     public float MouseSensitivity { get => mouseSensitivity; set => mouseSensitivity = value; }
     public PlayerStates CurrState { get => currState; set => currState = value; }
-    public Animator Anim { get => anim; set => anim = value; }
+    public Animator ArmsAnim { get => armsAnim; set => armsAnim = value; }
     public CharacterController Controller { get => controller; set => controller = value; }
     public Rigidbody Body { get => body; set => body = value; }
     public SwingingState SwingState { get => swingState; }
@@ -142,17 +161,23 @@ public class PlayerCharacter : LivingEntities
     public float LedgeGrabLowerSize { get => ledgeGrabLowerSize; }
     public GrenadeSpawner Grenade { get => grenade; }
     public Dictionary<int, Weapon> WeaponDictonary { get => weaponDictonary; set => weaponDictonary = value; }
+    public LayerMask DashLayerMask { get => dashLayerMask; }
+    public AudioClip DashAudioClip { get => dashAudioClip; }
+    public AudioSource AudioSource { get => audioSource; }
+   
+    public GameObject Arms { get => arms; }
+    public AudioClip LedgeGrabAudioClip { get => ledgeGrabAudioClip; }
+    public AudioClip SwingAudioClip { get => swingAudioClip; }
+    public AudioClip JumpAudioClip { get => jumpAudioClip; }
+    public Animator LegsAnim { get => legsAnim;  }
+    public PlayerDeathState DeathState { get => deathState; set => deathState = value; }
 
 
     #endregion Properties
     void Start()
     {
-
-        //Cursor.visible = false;
-        //Cursor.lockState = CursorLockMode.Locked;
-
-        //Cache Variables
-        Anim = GetComponent<Animator>();
+        //Cached variables
+        audioSource = GetComponent<AudioSource>();
         cam = Camera.main;
         Controller = GetComponent<CharacterController>();
         Body = GetComponent<Rigidbody>();
@@ -160,14 +185,17 @@ public class PlayerCharacter : LivingEntities
         transform = GetComponent<Transform>();
         grenade = GetComponent<GrenadeSpawner>();
         gameManager = GameManager.instance;
+        grenadeSpawner = GetComponent<GrenadeSpawner>();
 
         //States Initialization
-        airState = new AirState(this, Anim);
-        groundedState = new GroundedState(this, Anim);
-        dashState = new DashState(this, Anim);
-        ledgeGrabState = new LedgeGrabState(this, Anim);
-        swingState = new SwingingState(this, Anim);
-        climbingState = new ClimbingState(this, Anim);
+        airState = new AirState(this, ArmsAnim);
+        groundedState = new GroundedState(this, ArmsAnim);
+        dashState = new DashState(this, ArmsAnim);
+        ledgeGrabState = new LedgeGrabState(this, ArmsAnim);
+        swingState = new SwingingState(this, ArmsAnim);
+        climbingState = new ClimbingState(this, ArmsAnim);
+        deathState = new PlayerDeathState(this, ArmsAnim);
+
         CurrState = groundedState;
 
         //Weapon Initialization
@@ -183,11 +211,12 @@ public class PlayerCharacter : LivingEntities
         gameManager.stopFiring += StopFiring;
         gameManager.ResetCameraMovement += StopCameraMovement;
     }
+    
 
-    // Update is called once per frame
     void Update()
     {
-        CurrState = (PlayerStates)CurrState.Process();
+        //Debug.Log(CurrState.phase);
+      CurrState = (PlayerStates)CurrState.Process();
     }
     public IEnumerator StartDash()
     {
@@ -196,10 +225,16 @@ public class PlayerCharacter : LivingEntities
         yield return new WaitForSeconds(dashCooldown);
         isDashonCooldown = false;
     }
-    private void StopCameraMovement()
+    public void StopMovement()
     {
-        mouseLook.x = 0;
-        mouseLook.y = 0;
+        xMovement = 0;
+        yMovement = 0;
+        currXMovement = 0;
+        currYMovement = 0;
+    }
+    public void StopCameraMovement()
+    {
+        mouseLook = new Vector2(0, 0);
     }
     public void SwapWeapon(int weaponId)
     {
@@ -231,9 +266,13 @@ public class PlayerCharacter : LivingEntities
             }
             else if (health.hp <= 0)
             {
-                //implement our Gameover/Die
+                Die();
             }
         }
+    }
+    public void Die()
+    {
+        CurrState.SwitchToPlayerDeathState();
     }
 
     public IEnumerator IFrameCoolDown()
@@ -242,23 +281,28 @@ public class PlayerCharacter : LivingEntities
         yield return new WaitForSeconds(IFrameDuration);
         isInvincible = false;
     }
-
     private bool IsGameplayState()
     {
         return gameManager.CurrState == gameManager.GameplayState;
+    }
+    public bool IsInputState()
+    {
+        return gameManager.CurrState is InputStates;
     }
     private void StopFiring()
     {
         CurrState.StopAllFire();
     }
 
-
     #region InputMethodEvents
     public void OnMove(InputAction.CallbackContext context)
     {
-        xMovement = context.ReadValue<Vector2>().x;
-        yMovement = context.ReadValue<Vector2>().y;
-        //moveDirection = new Vector3(XMovement, 0, YMovement);
+        if (IsInputState())
+        {
+            xMovement = context.ReadValue<Vector2>().x;
+            yMovement = context.ReadValue<Vector2>().y;
+            //moveDirection = new Vector3(XMovement, 0, YMovement);
+        }
     }
     public void OnLookX(InputAction.CallbackContext context)
     {
@@ -309,7 +353,8 @@ public class PlayerCharacter : LivingEntities
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.started)
+
+        if (context.started&& IsInputState())
         {
             CurrState.Jump();
         }
@@ -325,7 +370,7 @@ public class PlayerCharacter : LivingEntities
 
     public void OnWeaponSelect(InputAction.CallbackContext context)
     {
-        if (gameManager != null)
+        if (gameManager != null &&IsInputState() &&CurrState!=deathState)
         {
             if (context.started)
             {
@@ -340,7 +385,7 @@ public class PlayerCharacter : LivingEntities
     }
     public void OnPause(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && (IsInputState()|| gameManager.CurrState is PauseState))
         {
             gameManager.CurrState.OnPause();
         }
@@ -357,7 +402,15 @@ public class PlayerCharacter : LivingEntities
             }
         }
     }
-
+    public void OnChangeGrenade(InputAction.CallbackContext context)
+    {
+        if(context.started &&IsGameplayState())
+        {
+            grenadeSpawner.GrenadeIndex++;
+            if (grenadeSpawner.GrenadeIndex > 3)
+                grenadeSpawner.GrenadeIndex = 0;
+        }
+    }
 
     #endregion InputMethodEvents
 

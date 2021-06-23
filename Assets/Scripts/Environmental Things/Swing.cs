@@ -9,6 +9,7 @@ public class Swing : MonoBehaviour
     public List<Vector3> waypoints;
     private Collider collider;
     private float cooldown = 1f;
+    private bool onCd = false;
 
     private void Start()
     {
@@ -23,16 +24,18 @@ public class Swing : MonoBehaviour
     private IEnumerator DisableCollider()
     {
         collider.enabled = false;
+        onCd = true;
         yield return new WaitForSeconds(cooldown);
         collider.enabled = true;
+        onCd = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag=="Player")
+      if(other.tag=="Player"&&!onCd)
         {
             PlayerCharacter player = other.GetComponent<PlayerCharacter>();
-            player.CurrState.SwitchToSwingState();
+            player.CurrState.SwitchToSwingState(this.gameObject.transform.position);
             StartCoroutine(DisableCollider());
            if(Vector3.Distance(other.transform.position,waypoints[0])
                 >Vector3.Distance(other.transform.position,waypoints[waypoints.Count-1]))

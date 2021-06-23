@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponSwapState : GameStates
+public class WeaponSwapState : InputStates
 {
     //IN DOOM basic movement so jumping and walking are allowed but you cant dash or shoot 
     //A small radial menu appears and then based on your mouse position when you let go of the button 

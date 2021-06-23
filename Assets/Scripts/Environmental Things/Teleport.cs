@@ -4,34 +4,35 @@ using UnityEngine;
 
 public class Teleport : MonoBehaviour
 {
-    [SerializeField] private GameObject player;
+  
     [SerializeField] private GameObject spawnPoint;
+    [SerializeField] private float teleportDelay;
 
-    // Start is called before the first frame update
+    private PlayerCharacter player;
+
     void Start()
     {
-
+        player = PlayerCharacter.instance;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  
+    
+    
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Teleport");
-        if (collision.gameObject.tag == "Player")
+       
+        if (other.gameObject.tag == "Player")
         {
-            StartCoroutine(Teleporting(collision, 2));
+            StartCoroutine(Teleporting(teleportDelay));
         }
     }
 
-    IEnumerator Teleporting(Collision collision, float delay)
+
+    IEnumerator Teleporting( float delay)
     {
         yield return new WaitForSeconds(delay);
-        collision.transform.position = spawnPoint.transform.position;
+        player.transform.position = spawnPoint.transform.position;
     }
 
     

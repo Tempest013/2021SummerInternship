@@ -18,26 +18,18 @@ public class Pendullum : MonoBehaviour
         motor.force = 100;
         joint.useMotor = true;
 
-       InvokeRepeating("NegativeTargetVelocity", 0f, 1.5f);
-       InvokeRepeating("PositiveTargetVelocity", 0.5f, 3f);
-    }
+        InvokeRepeating("NegativeTargetVelocity", 0f, 1.5f);
+        InvokeRepeating("PositiveTargetVelocity", 0.5f, 3f);
+       // NegativeTargetVelocity();
 
-    // Update is called once per frame
-    void Update()
-    {
-     
-        
-    }
 
-    private void SwingingPole()
-    {
-         
     }
 
     private void PositiveTargetVelocity()
     {
        // joint.useMotor = false;
         motor.targetVelocity = 100;
+        motor.force = 180;
         joint.motor = motor;
         //joint.useMotor = true;
     }
@@ -45,7 +37,8 @@ public class Pendullum : MonoBehaviour
     private void NegativeTargetVelocity()
     {
        // joint.useMotor = false;
-        motor.targetVelocity = -100;
+        motor.targetVelocity = -75;
+        motor.force = 100;
         joint.motor = motor;
       //  joint.useMotor = true;
     }

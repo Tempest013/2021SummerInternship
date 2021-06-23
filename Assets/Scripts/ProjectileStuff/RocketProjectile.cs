@@ -6,6 +6,7 @@ public class RocketProjectile : Projectiles
 {
     [SerializeField] private float boomRadius = 100f;
     [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private GameObject explosion;
     public RocketProjectile() : base()
     {
         bulletVelocity = 50f;
@@ -26,6 +27,7 @@ public class RocketProjectile : Projectiles
             Debug.Log("Hit");
             hitCollider.gameObject.GetComponent<EnemyBase>().health.TakeDamage(projDamage);
         }
+        Instantiate(explosion, this.transform.position, Quaternion.identity);
         this.gameObject.SetActive(false);
         //base.OnCollisionEnter(collision);
     }

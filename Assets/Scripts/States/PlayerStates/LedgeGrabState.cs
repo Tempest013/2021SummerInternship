@@ -13,16 +13,29 @@ public class LedgeGrabState : PlayerStates
     private List<Vector3> pointsBrokenUp = new List<Vector3>();
     private int currWaypoint;
     private float xToLerpTo;
+  
+    private Vector3 originalArmsPos;
 
     private bool currentlyFiring;
     public Vector3 PointToClimbTo { get => pointToClimbTo; set => pointToClimbTo = value; }
     public override void Enter()
     {
-
+        EnterAnimStateDisableGunBool("isClimbing");
+     
+        originalArmsPos=SetHandPosLedgeGrab(pointToClimbTo.y-player.Collider.height);
         currentlyFiring = SaveWasFiring(currentlyFiring);
         CreatePath();
         CameraFocus();
         base.Enter();
+    }
+    public override void Exit()
+    {
+        ExitAnimStateEnableGunBool("isClimbing");
+        if (currentlyFiring)
+            base.PrimaryFire();
+        //RemoveIKValues();
+        SetArmsPos(originalArmsPos);
+        base.Exit();
     }
 
     private void CreatePath()
@@ -55,12 +68,7 @@ public class LedgeGrabState : PlayerStates
         player.cam.transform.localEulerAngles = new Vector3(player.RotationOnX, 0f, 0f);
         player.Transform.Rotate(Vector3.up * player.MouseLook.x);
     }
-    public override void Exit()
-    {
-        if (currentlyFiring)
-            base.PrimaryFire();
-        base.Exit();
-    }
+    
     #region EmptyOverrides
     public override void Dash() { }
     public override void PrimaryFire()

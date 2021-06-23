@@ -6,13 +6,21 @@ public class EnemyRange : EnemyBase
 {
     [SerializeField] private GameObject spawner;
     private bool hasShot = false;
+    public GameObject me;
+
+    public GameObject Spawner { get => spawner; set => spawner = value; }
+
     // Start is called before the first frame update
     void Start()
     {
-
+        me = this.gameObject;
         AggresiveState = new AggresiveRangeState(this, anim);
 
         IdleState = new IdleState(this, anim);
+
+        AttackingState = new AttackRangeState(this, anim);
+
+        DeadedState = new DeadState(this, anim);
 
         currState = IdleState;
     }
@@ -21,14 +29,12 @@ public class EnemyRange : EnemyBase
     void Update()
     {
         currState = (EnemyState)currState.Process();
-        if (currState == AggresiveState && !hasShot)
-        {
-            Vector3 lookAtPos = PlayerCharacter.instance.gameObject.transform.position;
-            lookAtPos.y = 0;
-            this.gameObject.transform.LookAt(lookAtPos);
-            StartCoroutine(StartFiring());
-            ObjectPooling.instance.SpawnFromPool("EnemyBullet", spawner.transform.position, Quaternion.identity);
-        }
+        Debug.Log(currState);
+    }
+
+    public void startTheFiring()
+    {
+        StartCoroutine(StartFiring());
     }
 
     public IEnumerator StartFiring()

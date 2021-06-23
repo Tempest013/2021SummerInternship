@@ -11,11 +11,16 @@ public class AggresiveMeleeState : AggresiveState
     {
         base.Enter();
         boxer = enemy.GetComponent<EnemyMelee>().meleeHitRange;
+        enemy.anim.SetBool("isMoving", true);
     }
 
     public override void Update()
     {
         enemy.agent.SetDestination(PlayerCharacter.instance.transform.position);
+        if (enemy.inRange == true)
+        {
+            SwitchToAttackState();
+        }
         
     }
     
@@ -26,5 +31,6 @@ public class AggresiveMeleeState : AggresiveState
     public override void Exit()
     {
         base.Exit();
+        enemy.anim.SetBool("isMoving", false);
     }
 }

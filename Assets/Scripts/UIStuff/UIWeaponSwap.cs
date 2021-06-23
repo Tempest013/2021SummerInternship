@@ -33,6 +33,11 @@ public class UIWeaponSwap : MonoBehaviour
         PlayerCharacter.instance.SwapWeapon(3);
         gameManager.CurrState.SwitchToGameplayState();
     }
+    public void SwapToBigBoomer()
+    {
+        PlayerCharacter.instance.SwapWeapon(4);
+        gameManager.CurrState.SwitchToGameplayState();
+    }
     private void TurnOffCombatUI()
     {
         combatUI.SetActive(false);

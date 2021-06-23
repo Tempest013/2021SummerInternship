@@ -14,6 +14,10 @@ public class GroundedState : PlayerStates
     public override void Update()
     {
         Move(player.GroundAcceleration,0);
+        if (Mathf.Abs( player.CurrXMovement) > .1 || Mathf.Abs(player.CurrYMovement) > .1)
+            player.LegsAnim.SetBool("isWalking", true);
+        else
+            player.LegsAnim.SetBool("isWalking", false);
         CameraControls();
         if (!player.Controller.isGrounded)
             SwitchToAirState(false);
@@ -21,6 +25,7 @@ public class GroundedState : PlayerStates
 
     public override void Exit()
     {
+        player.LegsAnim.SetBool("isWalking", false);
         base.Exit();
     }
 }

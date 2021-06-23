@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RocketLauncher : Weapon
+public class RocketLauncher : SemiAutomaticWeapon
 {
 
     public RocketLauncher() : base()
     {
         id = 3;
-        name = "Rocket Launcher";
+        gunName = "Rocket Launcher";
 
         maxAmmo = 90;
-       
+
 
         canShoot = true;
         FireRate = 1f;
@@ -19,28 +19,30 @@ public class RocketLauncher : Weapon
         unlocked = true;
 
 
-        recoilRotateX = 0.1f;
-        recoilRotateY = 0.7f;
+
         maxRecoil = new Vector2(1, 5);
 
-        shootingCoroutine = RepeatFire();
-    }
 
-    public IEnumerator RepeatFire()
+    }
+  
+    protected override void Fire()
     {
-        while (true)
-        {
-            if (canShoot)
+        
+            if (canShoot && currAmmo>0)
             {
-
+                audioSource.PlayOneShot(audioClips[0]);
                 projectileType.SpawnFromPool("RocketBullet", spawner.transform.position, Quaternion.identity);
-                Recoil(recoilRotateX, recoilRotateY);
-                player.loseAmmo();
-            }
-            yield return new WaitForSeconds(FireRate);
-        }
-    }
+                Recoil();
+                LoseAmmo();
+               
 
+            }
+        
+    }
+    public override void StopPrimary()
+    {
+
+    }
     public override void FireSecondary()
     {
         throw new System.NotImplementedException();
@@ -52,5 +54,8 @@ public class RocketLauncher : Weapon
         throw new System.NotImplementedException();
     }
 
-
+    protected override void Update()
+    {
+        base.Update();
+    }
 }

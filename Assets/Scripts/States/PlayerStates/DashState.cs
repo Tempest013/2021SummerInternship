@@ -19,6 +19,8 @@ public class DashState : PlayerStates
         else
             direction = player.transform.right * player.CurrXMovement + player.transform.forward * player.CurrYMovement;
         direction = direction.normalized;
+        if(player.DashAudioClip!=null)
+        player.AudioSource.PlayOneShot(player.DashAudioClip);
         base.Enter();
     }
 
@@ -54,13 +56,18 @@ public class DashState : PlayerStates
     {
         player.Controller.Move((direction * acceleration) * Time.deltaTime);
     }
+
+    //May need to change this to account for height
     private void RayCastStop()
     {
-        if (Physics.Raycast(player.transform.position, direction, 1))
+        Vector3 bottomBody = new Vector3(player.transform.position.x, player.transform.position.y - ((player.Collider.height / 2)-player.Collider.radius),
+            player.transform.position.z);
+        Vector3 topBody = new Vector3(player.transform.position.x, player.transform.position.y + ((player.Collider.height / 2)-player.Collider.radius),
+            player.transform.position.z);
+        if (Physics.CapsuleCast(bottomBody,topBody,player.Collider.radius,direction,1,player.DashLayerMask))
         {
             if (phase != Phase.EXIT)
                 phase = Phase.EXIT;
-        
         }
     }
     public override void Dash() { }

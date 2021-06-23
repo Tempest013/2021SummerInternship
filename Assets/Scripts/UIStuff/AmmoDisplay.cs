@@ -7,26 +7,25 @@ using TMPro;
 public class AmmoDisplay : MonoBehaviour
 {
     private TextMeshProUGUI text;
-    public int ammo = 90;
+    private int ammo;
 
     // Start is called before the first frame update
     void Start()
     {
         text = GetComponent<TextMeshProUGUI>();
+        ammo = PlayerCharacter.instance.equipedWeapon.currAmmo;
         text.text = ammo.ToString();
         PlayerCharacter.OnAmmoLoss += OnAmmoChange;
     }
-
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("r"))
-            OnAmmoChange();
+
     }
 
     public void OnAmmoChange()
     {
-        ammo += -1;
+        ammo = PlayerCharacter.instance.equipedWeapon.currAmmo;
         text.text = ammo.ToString();
     }
 }

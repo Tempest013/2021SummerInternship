@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shotgun : Weapon
+public class Shotgun : SemiAutomaticWeapon
 {
 
     //private float fireRange = 50f;
@@ -12,76 +12,50 @@ public class Shotgun : Weapon
     //private bool hasFired = false;
 
 
-    public Shotgun() : base()
+    public Shotgun()
     {
-
+        
         id = 2;
-        name = "Shotgun";
+        gunName = "Shotgun";
 
         maxAmmo = 90;
-       
+
 
         canShoot = true;
         FireRate = 1f;
 
         unlocked = true;
 
-        recoilRotateX = 0.1f;
-        recoilRotateY = 0.7f;
+
         maxRecoil = new Vector2(1, 5);
 
-        shootingCoroutine = RepeatFire();
+       
+
     }
-    protected override void Recoil(float recoilX, float recoilY)
+    protected override void Update()
     {
-        recoilSmoothing.x = Random.Range(-recoilX, recoilX);
-        recoilSmoothing.y = recoilY;
+     
+        base.Update();
     }
-    public IEnumerator RepeatFire()
+
+    protected override void Fire()
     {
-        while (true)
+        if (currAmmo > 0)
         {
-            if (canShoot)
+            audioSource.PlayOneShot(audioClips[0]);
+            for (int i = 0; i < pellets; i++)
             {
-
-                //for (int i = 0; i < pellets; i++)
-                //{
-
-                //    RaycastHit hit;
-                //    Vector2[] points = new Vector2[pellets];
-                //    points[i] = new Vector2(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f));
-                //    if (Physics.Raycast(spawner.transform.position, new Vector3(points[i].x, points[i].y, -fireRange), out hit, fireRange))
-                //    {
-                //        hasFired = true;
-                //        bulletTracer[i].enabled = true;
-                //        bulletTracer[i].positionCount = 2;
-                //        Vector3[] linePoints = new Vector3[2];
-                //        linePoints[0] = spawner.transform.position;
-                //        linePoints[1] = new Vector3(points[i].x, points[i].y, -fireRange);
-                //        bulletTracer[i].SetPositions(linePoints);
-                //        Debug.Log(hit.distance);
-                //        if (hasFired)
-                //        {
-                //            bulletTracer[i].enabled = false;
-                //            timer = 0.5f;
-                //            hasFired = false;
-                //        }
-                //    }
-                //}
-
-
-                for (int i = 0; i < pellets; i++)
-                {
-                    projectileType.SpawnFromPool("ShotgunBullet", spawner.transform.position, Quaternion.identity);
-                }
-                Recoil(recoilRotateX, recoilRotateY);
+                projectileType.SpawnFromPool("ShotgunBullet", spawner.transform.position, Quaternion.identity);
             }
-            yield return new WaitForSeconds(FireRate);
+            Recoil();
+            LoseAmmo();
         }
     }
 
-   
-
+    public override void StopPrimary()
+    { 
+        
+    }
     public override void FireSecondary()
     {
         throw new System.NotImplementedException();

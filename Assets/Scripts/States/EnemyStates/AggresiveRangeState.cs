@@ -8,6 +8,8 @@ public class AggresiveRangeState : AggresiveState
 
     public override void Enter()
     {
+        enemy.anim.SetBool("isMoving", true);
+        enemy.agent.SetDestination(enemy.gameObject.transform.position);
         base.Enter();
     }
 
@@ -16,14 +18,14 @@ public class AggresiveRangeState : AggresiveState
         //Debug.Log(Vector3.Distance(PlayerCharacter.instance.transform.position, enemy.transform.position));
         if (10f < Vector3.Distance(PlayerCharacter.instance.transform.position, enemy.transform.position))
         {
-            enemy.agent.SetDestination(PlayerCharacter.instance.transform.position);
+            SwitchToAttackState();
             
         }
         else if (10f > Vector3.Distance(PlayerCharacter.instance.transform.position, enemy.transform.position))
         {
-            enemy.agent.SetDestination(enemy.transform.position);
+            enemy.agent.SetDestination(enemy.gameObject.transform.position);
 
-            //Debug.Log("Shoot");
+
         }
     }
 

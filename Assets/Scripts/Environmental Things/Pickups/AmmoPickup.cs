@@ -11,7 +11,7 @@ public class AmmoPickup : Pickup
        if(other.tag=="Player")
         {
             Weapon weapon;
-            weapon = GetComponent<PlayerCharacter>().WeaponDictonary[weaponId];
+            weapon = other.GetComponent<PlayerCharacter>().WeaponDictonary[weaponId];
             weapon.currAmmo += Amount;
             if (weapon.currAmmo > weapon.maxAmmo)
                 weapon.currAmmo = weapon.maxAmmo;

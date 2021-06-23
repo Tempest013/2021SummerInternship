@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pools:
   - tag: NormalBullet
-    prefab: {fileID: 3654666076619993272, guid: ea27bc8e8fc706d4e9d108e3b38a7a3d, type: 3}
+    prefab: {fileID: 691213585013236840, guid: ea27bc8e8fc706d4e9d108e3b38a7a3d, type: 3}
     size: 20
   - tag: EnemyBullet
     prefab: {fileID: 935225548909856385, guid: 16c84a7a3cbdef34e96157850dbed532, type: 3}

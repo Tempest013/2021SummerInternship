@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public abstract class State
 {
     public Phase phase;
-    protected State nextState;
+    public State nextState;
     public enum Phase
     {
         ENTER, UPDATE, EXIT

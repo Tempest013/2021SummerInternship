@@ -10,6 +10,9 @@ public class PauseState :GameStates
 
     public override void Enter()
     {
+
+        gamemanager.Player.StopCameraMovement();
+
         Time.timeScale = 0;
         UnlockCursor();
         gamemanager.stopFiring?.Invoke();

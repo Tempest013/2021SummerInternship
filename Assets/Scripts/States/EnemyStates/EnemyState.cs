@@ -34,4 +34,14 @@ public class EnemyState : State
         SwitchToShell(enemy.AggresiveState);
     }
 
+    public void SwitchToAttackState()
+    {
+        SwitchToShell(enemy.AttackingState);
+    }
+
+    public void SwitchToDeadState()
+    {
+        SwitchToShell(enemy.DeadedState);
+    }
+
 }

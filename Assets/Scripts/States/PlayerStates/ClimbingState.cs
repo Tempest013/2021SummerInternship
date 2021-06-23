@@ -14,13 +14,22 @@ public class ClimbingState : PlayerStates
         //base.Enter();
     }
 
+    public override void Enter()
+    {
+      
+        base.Enter();
+    }
     // Update is called once per frame
     public override void Update()
     {
         CameraControls();
     }
 
-    
+    public override void Exit()
+    { 
+        base.Exit();
+    }
+
 
 
 }

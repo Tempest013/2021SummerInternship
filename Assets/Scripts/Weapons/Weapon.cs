@@ -4,23 +4,37 @@ using UnityEngine;
 //Notes so im thinking the character spawns with a list of all the weapons already on him and when we pick up a weapon
 //The unlock bool for that weapon is checked and thus we can access the weapon
 
+//Break this into a semi Automatic weapon script and a fully auto weapon script
+
 public abstract class Weapon : MonoBehaviour
 {
 
     //can be used to identify weapon or we just use type of might be better
     //we can sort the weapons by id number 
+
+    [Header("ID Values")]
     public int id;
-    public string name;
+    public string gunName;
+    public bool unlocked;
 
     //Ammo Counts
+    [Header("Ammo Counts")]
     public int maxAmmo;
     public int currAmmo;
 
+    protected bool isShooting=false;
+
+
 
     //aka firerate
-    private float fireRate;
+
+    [SerializeField] private float fireRate;
+    [Header("FireRate")]
     protected bool canShoot;
-    private bool isShooting;
+  
+
+    //cached Variables
+    protected Transform playerTransform;
 
     //To know what projectile to shoot
     protected ObjectPooling projectileType;
@@ -32,79 +46,105 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField] protected GameObject spawner;
 
     //Recoil values
-    public float recoilRotateY;
-    public float recoilRotateX;
-    public Vector2 recoilSmoothing = new Vector2();
-    public Vector2 currRecoil;
-    public Vector2 maxRecoil;
-    public float initialRotation;
-    public bool recoilReset = true;
+    [Header ("Recoil Values")]
+    [SerializeField] protected float recoilX;
+    [SerializeField] protected float minRecoilY;
+    [SerializeField] protected float maxRecoilY;
+    [SerializeField] protected float recoilDampening = 1;
+    [SerializeField] private float recoilAdjustmentSpeed = .2f;
+    protected Vector2 recoilSmoothing = new Vector2();
+    protected Vector2 currRecoil;
+    protected Vector2 maxRecoil;
+    protected bool recoilReset = false;
+    private float recoilCompensation=0f;
+    protected float initialRotation;
 
-    //To know if we can use the weapon
-    public bool unlocked;
+    [Header("AudioClips")]
+    [SerializeField] protected AudioClip[] audioClips;
+    protected AudioSource audioSource;
 
-    //For fullyautomatics
-    protected IEnumerator shootingCoroutine;
+
+
+    protected IEnumerator shotCD;
+    
+
 
     protected float FireRate { get => fireRate; set => fireRate = value; }
     public bool IsShooting { get => isShooting; set => isShooting = value; }
 
-    private void Start()
+    protected virtual void Start()
     {
-        IsShooting = false;
+        audioSource = GetComponent<AudioSource>();
         player = PlayerCharacter.instance;
+        playerTransform = player.GetComponent<Transform>();
         projectileType = ObjectPooling.instance;
+        player.loseAmmo();
     }
-    private void Update()
+    
+    private void OnEnable()
     {
-        if(currRecoil.x <= maxRecoil.x || -currRecoil.x >= -maxRecoil.x)
+        if (PlayerCharacter.instance != null) 
+        PlayerCharacter.instance.loseAmmo();
+    }
+    protected abstract void Update();
+
+    public abstract void FirePrimary();
+
+    protected void ApplyRecoil()
+    {
+        if (currRecoil.x <= maxRecoil.x || -currRecoil.x >= -maxRecoil.x)
         {
-            player.GetComponent<Transform>().Rotate(Vector3.up, recoilSmoothing.x);
+            playerTransform.Rotate(Vector3.up, recoilSmoothing.x);
             currRecoil.x += recoilSmoothing.x;
         }
-        if(currRecoil.y <= maxRecoil.y)
+        if (currRecoil.y <= maxRecoil.y)
         {
             player.RotationOnX -= recoilSmoothing.y;
             currRecoil.y += recoilSmoothing.y;
         }
-        if(!isShooting && recoilReset)
+    }
+    protected void LoseAmmo()
+    {
+        currAmmo -= 1;
+        player.loseAmmo();
+    }
+    protected void RecoilAdjust()
+    {
+        if (player.RotationOnX > initialRotation - recoilDampening && player.RotationOnX < initialRotation + recoilDampening
+            || Mathf.Abs(recoilCompensation) > currRecoil.y || player.MouseLook.y > 0.5f)
         {
-            player.RotationOnX = Mathf.Lerp(player.RotationOnX, initialRotation, 0.2f);
+
             currRecoil = new Vector2(0, 0);
-            if (player.RotationOnX > initialRotation-0.1 && player.RotationOnX < initialRotation)
+            recoilCompensation = 0;
             recoilReset = false;
         }
-        recoilSmoothing *= 0.9f;
-    }
-
-    public virtual void FirePrimary()
-    {
-        StartCoroutine(shootingCoroutine);
-        if (canShoot == true)
+        else
         {
-            StartCoroutine(ShotIsOnCD());
-            IsShooting = true;
+            recoilCompensation += (player.RotationOnX - (Mathf.Lerp(player.RotationOnX, initialRotation, recoilAdjustmentSpeed)));
+            player.RotationOnX = Mathf.Lerp(player.RotationOnX, initialRotation, recoilAdjustmentSpeed);
         }
+        Debug.Log(initialRotation);
+        
     }
-
-    protected virtual void Recoil(float recoilX, float recoilY)
+    protected virtual void Recoil()
     {
         recoilSmoothing.x = Random.Range(-recoilX, recoilX);
-        recoilSmoothing.y = Random.Range(0, recoilY);
+        recoilSmoothing.y = Random.Range(minRecoilY, maxRecoilY);
+    }
+  
+
+    public bool CheckRecoilReset()
+    {
+        return (player.CurrState is DashState || player.CurrState is AirState || player.CurrState is GroundedState && recoilReset==false); 
     }
 
     public abstract void FireSecondary();
-    public virtual void StopPrimary()
-    {
-        StopCoroutine(shootingCoroutine);
-        IsShooting = false;
-        recoilReset = true;
-        initialRotation = player.RotationOnX + currRecoil.y;
-    }
+    public abstract void StopPrimary();
+    
     public abstract void StopSecondary();
-
     protected virtual IEnumerator ShotIsOnCD()
     {
+      
         canShoot = false;
         yield return new WaitForSeconds(FireRate);
         canShoot = true;
@@ -112,7 +152,7 @@ public abstract class Weapon : MonoBehaviour
 
     public Weapon()
     {
-        //projectileType = ObjectPooling.instance;
+        shotCD = ShotIsOnCD();
     }
     protected virtual void OnDisable()
     {

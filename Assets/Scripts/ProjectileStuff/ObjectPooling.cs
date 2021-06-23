@@ -47,9 +47,11 @@ public class ObjectPooling : MonoBehaviour
             return null;
         }
         GameObject objToSpawn = poolDictionary[tag].Dequeue();
-       
+        Rigidbody rigidbody = objToSpawn.GetComponent<Rigidbody>();
+        rigidbody.freezeRotation = false;
         objToSpawn.transform.position = position;
         objToSpawn.transform.rotation = rotation;
+        rigidbody.freezeRotation = true;
         objToSpawn.SetActive(true);
         IPooledObj pooledObj = objToSpawn.GetComponent<IPooledObj>();
 

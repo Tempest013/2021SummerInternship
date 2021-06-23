@@ -8,27 +8,31 @@ public class EnemyMelee : EnemyBase
     [SerializeField] private float delayTime = 2f;
     public delegate void HitAction();
     public static event HitAction OnHitMelee;
+    
 
     public BoxCollider meleeHitRange;
 
-    // Start is called before the first frame update
     void Start()
     {
-
+        
         AggresiveState = new AggresiveMeleeState(this,anim);
 
         IdleState = new IdleState(this, anim);
+
+        AttackingState = new AttackMeleeState(this, anim);
+
+        DeadedState = new DeadState(this, anim);
 
         meleeHitRange = this.GetComponentInChildren<BoxCollider>();
 
         currState = IdleState;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         currState = (EnemyState)currState.Process();
-        //Debug.Log(currState);
+       // Debug.Log(currState);
     }
 
 
@@ -43,12 +47,18 @@ public class EnemyMelee : EnemyBase
             if((Time.time - sTime) > delayTime)
             {
                 sTime = Time.time;
-                Debug.Log("hurt");
+                inRange = true;
                 PlayerCharacter.instance.TakeDamage(25);
+
                 
             }
         }
     }
 
-    
+    private void OnTriggerExit(Collider other)
+    {
+        
+    }
+
+
 }

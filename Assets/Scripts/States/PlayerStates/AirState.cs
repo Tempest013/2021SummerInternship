@@ -41,9 +41,7 @@ public class AirState : PlayerStates
     public void WallClimbCheck()
     {
         Transform playerPos = player.transform;
-        //Debug.DrawRay(player.transform.position, player.transform.forward);
-        //Debug.DrawRay(new Vector3(playerPos.position.x + playerPos.forward.x, 
-        //              playerPos.position.y + player.Collider.height / 2, playerPos.position.z + playerPos.forward.z), Vector3.down);
+        
         RaycastHit hit;
         if (Physics.Raycast(new Vector3(playerPos.position.x + playerPos.forward.x,
             playerPos.position.y + player.Collider.height / 2, playerPos.position.z + playerPos.forward.z),

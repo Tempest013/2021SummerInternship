@@ -36,6 +36,7 @@ public class GrenadeSpawner : MonoBehaviour
     [SerializeField] private bool freezeGrenade;
     [SerializeField] private bool flameGrenade;
     [SerializeField] private bool poisonGrenade;
+    [SerializeField] private int grenadeIndex;
 
     [Header("Test Variables")]
     [SerializeField] private float gizmoSize;
@@ -52,8 +53,9 @@ public class GrenadeSpawner : MonoBehaviour
     public bool FlameGrenade { get => flameGrenade; set => flameGrenade = value; }
     public bool PoisonGrenade { get => poisonGrenade; set => poisonGrenade = value; }
     public float GizmoSize { get => gizmoSize; set => gizmoSize = value; }
+    public int GrenadeIndex { get => grenadeIndex; set => grenadeIndex = value; }
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -69,22 +71,48 @@ public class GrenadeSpawner : MonoBehaviour
 
     private void ChooseGrenade()
     {
-        if(NormalGrenade == true)
+        //just makes it easier to change the index as opposed to toggling off the old bool to toggle the new one
+        switch (GrenadeIndex)
         {
-            grenade = normal;
+            case 0:
+                {
+                    grenade = normal;
+                    break;
+                }
+            case 1:
+                {
+                    grenade = freeze;
+                    break;
+                }
+            case 2:
+                {
+                    grenade = flame;
+                    break;
+                }
+            case 3:
+                {
+                    grenade = poison;
+                    break;
+                }
         }
-        else if (FreezeGrenade == true)
-        {
-            grenade = freeze;
-        }
-        else if (FlameGrenade == true)
-        {
-            grenade = flame;
-        }
-        else if (PoisonGrenade == true)
-        {
-            grenade = poison;
-        }
+        #region oldVersion
+        //if(NormalGrenade == true)
+        //{
+        //    grenade = normal;
+        //}
+        //else if (FreezeGrenade == true)
+        //{
+        //    grenade = freeze;
+        //}
+        //else if (FlameGrenade == true)
+        //{
+        //    grenade = flame;
+        //}
+        //else if (PoisonGrenade == true)
+        //{
+        //    grenade = poison;
+        //}
+        #endregion oldVersion
     }
 
     public void ThrowGrenade()

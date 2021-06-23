@@ -12,6 +12,7 @@ public class GameStates : State
 
     public virtual void OnPause()
     {
+        if(gamemanager.Player.CurrState!=gamemanager.Player.DeathState)
         SwitchToPauseState();
     }
 
@@ -35,6 +36,15 @@ public class GameStates : State
     public void SwitchToGameplayState()
     {
         SwitchToShell(gamemanager.GameplayState);
+    }
+
+    public void SwitchToDeathState()
+    {
+        SwitchToShell(gamemanager.DeathState);
+    }
+    public void SwitchToTextBoxState()
+    {
+        SwitchToShell(gamemanager.TextBoxState);
     }
     public void SwitchToPauseState()
     {

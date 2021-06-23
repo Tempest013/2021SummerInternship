@@ -2,26 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlasmaRifle : Weapon
+public class PlasmaRifle : AutomaticWeapon
 {
 
 
-    public PlasmaRifle():base()
+    public PlasmaRifle() : base()
     {
 
         id = 1;
-        name = "Plasma Rifle";
+        gunName = "Plasma Rifle";
 
         maxAmmo = 90;
-       
+
 
         canShoot = true;
         FireRate = .1f;
 
         unlocked = true;
 
-        recoilRotateX = 0.1f;
-        recoilRotateY = 0.1f;
+
         maxRecoil = new Vector2(1, 5);
 
         shootingCoroutine = RepeatFire();
@@ -32,30 +31,37 @@ public class PlasmaRifle : Weapon
     {
         while (true)
         {
-            if (canShoot)
+            if (canShoot && currAmmo>0)
             {
-                
+                audioSource.PlayOneShot(audioClips[0]);
                 projectileType.SpawnFromPool("NormalBullet", spawner.transform.position, Quaternion.identity);
-                Recoil(recoilRotateX, recoilRotateY);
-                player.loseAmmo();
+                Recoil();
+                LoseAmmo();
             }
             yield return new WaitForSeconds(FireRate);
         }
     }
 
-   
+    public override void StopPrimary()
+    {
+        if (isShooting)
+        {
+            //audioSource.Stop();
+            if(audioSource.isActiveAndEnabled)
+            audioSource.PlayOneShot(audioClips[1]);
+        }
+        base.StopPrimary();
+    }
 
     public override void FireSecondary()
     {
         throw new System.NotImplementedException();
     }
 
-  
-
     public override void StopSecondary()
     {
         throw new System.NotImplementedException();
     }
 
-    
+
 }

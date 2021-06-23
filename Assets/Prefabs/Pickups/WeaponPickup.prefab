@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4468150106082164585}
   - component: {fileID: 4468150106082164590}
   - component: {fileID: 4468150106082164581}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: WeaponPickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,5 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fecac7a862de35f4ebcbf9ed2dfa312d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotationSpeed: 0.8
+  bobbingHeight: 0.0015
   amount: 15
   weaponId: 1
