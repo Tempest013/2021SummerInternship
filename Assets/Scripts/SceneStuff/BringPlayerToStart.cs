@@ -16,9 +16,6 @@ public class BringPlayerToStart : MonoBehaviour
         PlayerCharacter.instance.transform.position = this.gameObject.transform.position;
      }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
+    
 }

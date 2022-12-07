@@ -85,9 +85,9 @@ public class SwingingState : PlayerStates
     {
         base.Jump();
     }
-    public override void Melee()
-    {
-
-    }
+    public override void Melee() { }
+ 
+    public override void Grenade() { }
+  
     #endregion EmptyOverrides
 }

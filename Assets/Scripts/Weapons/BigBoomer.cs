@@ -27,9 +27,11 @@ public class BigBoomer : ChargeWeapon
     {
         if (currAmmo > 0)
         {
-            projectileType.SpawnFromPool("RocketBullet", spawner.transform.position, Quaternion.identity);
+            projectileType.SpawnFromPool("BigBoomerBullet", spawner.transform.position, Quaternion.identity);
             Recoil();
             LoseAmmo();
+            if (audioClips.Length > 0 &&shotAudioSource!=null)
+                shotAudioSource.PlayOneShot(audioClips[0]);
         }
     }
 }

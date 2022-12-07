@@ -20,43 +20,74 @@ public class SceneManagement : MonoBehaviour
     public GameObject loadingScreen;
     public Slider slider;
     [SerializeField] private string sceneNameNext;
-    [SerializeField] private string currentSceneName;
+    public string currentSceneName;
     public AsyncOperation async;
+    public int checkPoint = -2;
+    private PlayerCharacter player;
+    private GameManager gamemanager;
+
+
+    void Start()
+    {
+        if (SceneManager.GetActiveScene().name == "CoreScene")
+        {
+            loadNextScene("MainMenu");
+            // GameManager.instance.CurrState.SwitchToMenuState();
+        }
+        player = PlayerCharacter.instance;
+        gamemanager = GameManager.instance;
+    }
 
     public void loadNextScene()
     {
+        PlayerTransformCheck();
         StartCoroutine(LoadLevelAsync());
+    }
+
+    private void PlayerTransformCheck()
+    {
+        if (player != null && gamemanager != null)
+            player.transform.parent = gamemanager.transform;
     }
 
     public void loadNextScene(string nextSceneName)
     {
+
+        PlayerTransformCheck();
         sceneNameNext = nextSceneName;
+        checkPoint = 0;
         StartCoroutine(LoadLevelAsync());
     }
 
     private IEnumerator LoadLevelAsync()
     {
+        PlayerTransformCheck();
         async = SceneManager.LoadSceneAsync(sceneNameNext, LoadSceneMode.Additive);
         async.allowSceneActivation = false;
         loadingScreen.SetActive(true);
-        while(async.isDone)
+        if (currentSceneName != "")
+        {
+            AsyncOperation op = SceneManager.UnloadSceneAsync(currentSceneName);
+            while (op.isDone)
+            {
+                yield return null;
+            }
+        }
+        while (async.isDone)
         {
             float progress = Mathf.Clamp01(async.progress / .9f);
             slider.value = progress;
             yield return null;
         }
-        if (currentSceneName != "")
-        {
-            AsyncOperation op = SceneManager.UnloadSceneAsync(currentSceneName);
-            while(op.isDone)
-            {
-                yield return null;
-            }
-        }
+
         loadingScreen.SetActive(false);
         currentSceneName = sceneNameNext;
         async.allowSceneActivation = true;
-        
+        if (CheckpointsSystem.instance != null)
+        {
+            CheckpointsSystem.instance.gameObject.SetActive(false);
+            CheckpointsSystem.instance.gameObject.SetActive(true);
+        }
         //Cursor.visible = false;
         //Cursor.lockState = CursorLockMode.Locked;
 
@@ -64,14 +95,14 @@ public class SceneManagement : MonoBehaviour
 
     private void LoadMainMenu()
     {
+        PlayerTransformCheck();
         loadingScreen.SetActive(true);
         StartCoroutine(LoadMainMenuAsync());
     }
 
     private IEnumerator LoadMainMenuAsync()
     {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        PlayerTransformCheck();
         async = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Additive);
         while (!async.isDone)
         {
@@ -81,26 +112,9 @@ public class SceneManagement : MonoBehaviour
         }
         loadingScreen.SetActive(false);
         generalCanvas.SetActive(false);
-        
     }
-
-
 
     // Start is called before the first frame update
-    void Start()
-    {
-        if (SceneManager.GetActiveScene().name == "TestScene")
-        {
-            loadNextScene("MainMenu");
-        }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown("b"))
-        {
-            loadNextScene("NianTRALALALAScene");
-        }
-    }
+    
 }

@@ -11,7 +11,10 @@ public class CheckpointsSystem : MonoBehaviour
         if (instance == null)
             instance = this;
         else if (instance != this)
-            Destroy(gameObject);
+        {
+            Destroy(CheckpointsSystem.instance.gameObject);
+            instance = this;
+        }
     }
     #endregion singleton
 
@@ -20,11 +23,11 @@ public class CheckpointsSystem : MonoBehaviour
     [SerializeField] private GameObject[] checkPointVisuals;
     [SerializeField] private GameObject[] respawnPoints;
 
-    private int indexActivator;
+    private int indexActivator = -1;
     protected PlayerCharacter player;
 
 
-    private CheckPoint checkPoint;
+  private CheckPoint checkPoint;
 
     #region Refactoring
     public int IndexActivator { get => indexActivator; set => indexActivator = value; }
@@ -35,22 +38,58 @@ public class CheckpointsSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player = PlayerCharacter.instance;             
+        player = PlayerCharacter.instance;
+        if (SceneManagement.instance != null)
+        {
+            if (SceneManagement.instance.checkPoint != -2)
+            {
+                if(indexActivator >= 0 && indexActivator < checkPoints.Length)
+                {
+                    this.indexActivator = SceneManagement.instance.checkPoint;
+                    checkPoint = checkPoints[indexActivator];
+                }
+                
+            }
+            if (IndexActivator == -1)
+            {
+                checkPoint = checkPoints[0];
+            }
+        }
+        else
+        {
+            checkPoint = checkPoints[0];
+            indexActivator = 0;
+        }
+        player.transform.position = checkPoint.transform.position;
+        player.transform.rotation = checkPoint.transform.rotation;
+    }
+
+    private void OnEnable()
+    {
+        if (checkPoints[0] != null)
+        {
+            checkPoint = checkPoints[0];
+            if (player != null)
+            {
+                player.transform.position = checkPoint.transform.position;
+                player.transform.rotation = checkPoint.transform.rotation;
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         CheckIndex();
-        ActivateCheckPoint(indexActivator);
+        ActivateCheckPoint();
         DeactivateVisuals();
 
     }
 
-    private void DeactivateVisuals()
+    public void DeactivateVisuals()
     {
         for (int i = 0; i < checkPointVisuals.Length; i++)
-        {                    
+        {
             if (CheckPoint.CheckPointName != checkPoints[i].name)
             {
                 checkPointVisuals[i].SetActive(false);
@@ -58,10 +97,14 @@ public class CheckpointsSystem : MonoBehaviour
         }
     }
 
-    private void ActivateCheckPoint(int indexActive)
+    public void ActivateCheckPoint()
     {
-        CheckPoint = checkPoints[indexActive];
-        checkPointVisuals[indexActive].SetActive(true);
+        if( indexActivator >= 0 && indexActivator < checkPoints.Length)
+        {
+            CheckPoint = checkPoints[indexActivator];
+            checkPointVisuals[indexActivator].SetActive(true);
+        }
+
 
     }
 
@@ -69,14 +112,14 @@ public class CheckpointsSystem : MonoBehaviour
     {
         for (int i = 0; i < checkPoints.Length; i++)
         {
-          if(checkPoint != null)
-          {
-             if (CheckPoint.CheckPointName == checkPoints[i].name)
-             {
-                indexActivator = i;
-             
-             }
-          }        
+            if (checkPoint != null)
+            {
+                if (CheckPoint.CheckPointName == checkPoints[i].name)
+                {
+                    indexActivator = i;
+
+                }
+            }
         }
-    }    
+    }
 }

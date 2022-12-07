@@ -15,14 +15,11 @@ public class AirState : PlayerStates
 
     public override void Enter()
     {
-
-       
         base.Enter();
     }
 
     public override void Update()
-    {
-        
+    {   
         CameraControls();
         Move(player.AirAcceleration, player.ForceOfGravity);
         if (player.Controller.isGrounded)
@@ -35,6 +32,7 @@ public class AirState : PlayerStates
         if (hasDoubleJumped == false)
         {
             base.Jump();
+            player.PlayAudioClip(player.JumpAudioClips[3], 1);
             HasDoubleJumped = true;
         }
     }
@@ -58,13 +56,15 @@ public class AirState : PlayerStates
     }
     private bool CeilingCheck()
     {
-        Debug.DrawRay(new Vector3(player.transform.position.x, player.transform.position.y + player.Collider.height/2, player.transform.position.z),
-            Vector3.up,Color.red); 
+        RaycastHit hit;
         if (Physics.Raycast(new Vector3(player.transform.position.x, player.transform.position.y + player.Collider.height / 2, player.transform.position.z),
-            Vector3.up, .2f))
+            Vector3.up,out hit, .2f))
         {
-            player.CurrZMovement = player.InitialFallSpeed;
-            return true;
+            if (hit.collider.gameObject.tag != "Swing")
+            {
+                player.CurrZMovement = player.InitialFallSpeed;
+                return true;
+            }
         }
         return false;
     }

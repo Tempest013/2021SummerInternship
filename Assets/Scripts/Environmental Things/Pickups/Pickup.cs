@@ -23,6 +23,10 @@ public class Pickup : MonoBehaviour
         transform.position = transform.position + (new Vector3(0, Mathf.Sin(Time.time)*bobbingHeight*Time.timeScale, 0));
     }
     
-
+    protected void PlaySoundFX(PlayerCharacter character, float index,float volume)
+    {
+        character.PickupAudioSource.volume=volume;
+        character.PickupAudioSource.PlayOneShot(character.PickupAudioClips[0]);
+    }
     public int Amount { get => amount; set => amount = value; }
 }

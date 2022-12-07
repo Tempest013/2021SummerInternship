@@ -11,7 +11,7 @@ public class WeaponSwapState : InputStates
 
     public override void OnWeaponSwap()
     {
-        SwitchToGameplayState();
+       SwitchToGameplayState();
     }
     public override void Enter()
     {

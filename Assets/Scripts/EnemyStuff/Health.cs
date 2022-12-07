@@ -6,20 +6,33 @@ public class Health : MonoBehaviour
 {
     public int hp;
     public int maxHp;
-    
+    private IEnumerator flashRed;
+
     public virtual void TakeDamage(int damage)
     {
         hp -= damage;
-       
-        if(hp <= 0)
+        EnemyBase enemy = this.GetComponent<EnemyBase>();
+        if(enemy!=null &&!enemy.IsDead)
         {
-            this.GetComponent<EnemyBase>().Die();
+            if(flashRed!=null)
+            StopCoroutine(flashRed);
+            flashRed = enemy.FlashRed();
+            StartCoroutine(flashRed);
+           // DamagePopup.Create(this.transform.position, damage, enemy.DamagePopupRef);
+
+        }
+
+        if (hp <= 0)
+        {
+            if(enemy!=null)
+            enemy.Die();
+
         }
     }
     public virtual void Heal(int amount)
     {
         hp += amount;
-        if(hp>=maxHp)
+        if (hp >= maxHp)
         {
             hp = maxHp;
         }

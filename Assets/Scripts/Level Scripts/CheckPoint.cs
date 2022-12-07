@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[System.Serializable]
 public class CheckPoint : MonoBehaviour
 {
 
@@ -22,10 +22,10 @@ public class CheckPoint : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            Debug.Log(checkPointName);
+            SaveManager.instance.Save();
             CheckPointName = this.gameObject.name;
             checkSystem.CheckPoint = this;
-           
+            this.gameObject.GetComponent<Collider>().enabled = false;
         }
     }
 }

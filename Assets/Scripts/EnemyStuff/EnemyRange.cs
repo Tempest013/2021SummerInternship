@@ -5,14 +5,16 @@ using UnityEngine;
 public class EnemyRange : EnemyBase
 {
     [SerializeField] private GameObject spawner;
+    public bool hasAttacked = false;
     private bool hasShot = false;
     public GameObject me;
 
     public GameObject Spawner { get => spawner; set => spawner = value; }
 
     // Start is called before the first frame update
-    void Start()
+   public override void Start()
     {
+        base.Start();
         me = this.gameObject;
         AggresiveState = new AggresiveRangeState(this, anim);
 
@@ -22,6 +24,8 @@ public class EnemyRange : EnemyBase
 
         DeadedState = new DeadState(this, anim);
 
+        JumpState = new JumpState(this, anim);
+
         currState = IdleState;
     }
 
@@ -29,7 +33,7 @@ public class EnemyRange : EnemyBase
     void Update()
     {
         currState = (EnemyState)currState.Process();
-        Debug.Log(currState);
+ 
     }
 
     public void startTheFiring()
@@ -42,6 +46,7 @@ public class EnemyRange : EnemyBase
         hasShot = true;
         yield return new WaitForSeconds(2f);
         hasShot = false;
+        
     }
 
     

@@ -1,16 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
-//Notes so im thinking the character spawns with a list of all the weapons already on him and when we pick up a weapon
-//The unlock bool for that weapon is checked and thus we can access the weapon
-
-//Break this into a semi Automatic weapon script and a fully auto weapon script
-
 public abstract class Weapon : MonoBehaviour
 {
-
-    //can be used to identify weapon or we just use type of might be better
-    //we can sort the weapons by id number 
 
     [Header("ID Values")]
     public int id;
@@ -123,8 +115,6 @@ public abstract class Weapon : MonoBehaviour
             recoilCompensation += (player.RotationOnX - (Mathf.Lerp(player.RotationOnX, initialRotation, recoilAdjustmentSpeed)));
             player.RotationOnX = Mathf.Lerp(player.RotationOnX, initialRotation, recoilAdjustmentSpeed);
         }
-        Debug.Log(initialRotation);
-        
     }
     protected virtual void Recoil()
     {

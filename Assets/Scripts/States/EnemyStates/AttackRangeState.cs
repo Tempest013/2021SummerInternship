@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class AttackRangeState : AttackState
 {
+    private float sTime = 0f;
+    private float delayTime = 3f;
+    private bool onlyonce = false;
     public AttackRangeState(EnemyBase enemy, Animator anim) : base(enemy, anim) { }
     public override void Enter()
     {
@@ -11,24 +14,34 @@ public class AttackRangeState : AttackState
         lookAtPos.y = 0;
         enemy.gameObject.transform.LookAt(lookAtPos);
         enemy.GetComponent<EnemyRange>().startTheFiring();
-        ObjectPooling.instance.SpawnFromPool("EnemyBullet", enemy.GetComponent<EnemyRange>().Spawner.transform.position, Quaternion.identity);
+        if (!onlyonce)
+        {
+            onlyonce = true;
+            ObjectPooling.instance.SpawnFromPool("EnemyBullet", enemy.GetComponent<EnemyRange>().Spawner.transform.position, Quaternion.identity);
+        }
+        RangedAttacked = true;
+        enemy.anim.SetBool("isMoving", false);
+        enemy.anim.SetTrigger("Attacking");
+
+        StaticCoroutine.StartCoroutine(AttackDelay());
+
         base.Enter();
+    }
+
+    public IEnumerator AttackDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        SwitchToAggresiveState();
     }
 
     public override void Update()
     {
-        if (10f > Vector3.Distance(PlayerCharacter.instance.transform.position, enemy.transform.position))
-        {
-            SwitchToAggresiveState();
-
-
-        }
     }
 
     public override void Exit()
     {
-        //things to do
-
+        onlyonce = false;
+        enemy.anim.SetBool("isMoving", true);
         base.Exit();
     }
 

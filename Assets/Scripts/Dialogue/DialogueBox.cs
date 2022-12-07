@@ -21,6 +21,7 @@ public class DialogueBox : MonoBehaviour
 
     void Start()
     {
+        if(textBox!=null)
         textBox.SetActive(false);
         gameManager = GameManager.instance;
     }
@@ -38,7 +39,6 @@ public class DialogueBox : MonoBehaviour
         if (other.gameObject.tag == "Player" && touched == false)
         {
             gameManager.CurrState.SwitchToTextBoxState();
-            Debug.Log("ass");
             textBox.SetActive(true);
             isActive = true;
             UpdateText(0);
@@ -59,7 +59,6 @@ public class DialogueBox : MonoBehaviour
     {
         if (index == dialogue.Length-1)
         {
-            Debug.Log("ERROR");
            textBox.SetActive(false);
            isActive = false;
            indexIndicator = 0;

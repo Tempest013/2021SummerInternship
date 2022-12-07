@@ -7,10 +7,14 @@ public class ArmorPickup :Pickup
     private void OnTriggerEnter(Collider other)
     {
         if(other.tag=="Player")
-        {
+        {   
             ArmorUI playerHp = other.GetComponent<PlayerCharacter>().armor;
-            playerHp.HealArmor(Amount);
-            Destroy(gameObject);
+            if (playerHp.armor != playerHp.maxArmor)
+            {
+                PlaySoundFX(other.GetComponent<PlayerCharacter>(), 0, 1);
+                playerHp.HealArmor(Amount);
+                Destroy(gameObject);
+            }
         }
     }
 }

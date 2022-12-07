@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
+using UnityEngine.Events;
+using UnityEngine.Audio;
+
 public class PlayerCharacter : LivingEntities
 {
     #region singleton
@@ -13,6 +16,7 @@ public class PlayerCharacter : LivingEntities
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
+        DontDestroyOnLoad(this.gameObject);
     }
     #endregion singleton
 
@@ -21,6 +25,7 @@ public class PlayerCharacter : LivingEntities
     public static event DashAction OnDasher;
     public delegate void AmmoStuff();
     public static event AmmoStuff OnAmmoLoss;
+   
 
     //input controls
     private Vector3 moveDirection;
@@ -28,7 +33,6 @@ public class PlayerCharacter : LivingEntities
     //look controls
     private Vector2 mouseLook;
 
-    [SerializeField] private float mouseSensitivity = 20f;
     private float rotationOnX;
     public Camera cam;
 
@@ -41,6 +45,7 @@ public class PlayerCharacter : LivingEntities
     [SerializeField] private float forceOfGravity;
     [SerializeField] private float jumpForce;
     [SerializeField] private float initialFallSpeed = -1f;
+    
     private float xMovement;
     private float yMovement;
     private float currXMovement = 0;
@@ -76,6 +81,7 @@ public class PlayerCharacter : LivingEntities
     [SerializeField] private Dictionary<int, Weapon> weaponDictonary = new Dictionary<int, Weapon>();
     [SerializeField] public Weapon equipedWeapon;
 
+   
     //States
     private PlayerStates currState;
     private AirState airState;
@@ -96,21 +102,24 @@ public class PlayerCharacter : LivingEntities
     private Rigidbody body;
     private CapsuleCollider collider;
     private Transform transform;
-    private GrenadeSpawner grenade;
     private GameManager gameManager;
 
     [Header("Player Stats")]
-    public PlayerHealth health;
+    private PlayerHealth health;
     public ArmorUI armor;
     [SerializeField] private bool isInvincible = false;
     public float IFrameDuration = 1f;
+    [SerializeField] public static float mouseSensitivity = 20f;
 
-    [Header("Sound FX")]
+   
     private AudioSource audioSource;
+    [Header("Sound FX")]
     [SerializeField] private AudioClip dashAudioClip;
     [SerializeField] private AudioClip ledgeGrabAudioClip;
-    [SerializeField] private AudioClip swingAudioClip;
-    [SerializeField] private AudioClip jumpAudioClip;
+    [SerializeField] private AudioClip[] jumpAudioClips;
+    [SerializeField] private AudioClip deathAudioClip;
+    [SerializeField] private AudioClip[] pickupAudioClips;
+    [SerializeField] private AudioSource pickupAudioSource;
 
     [Header("Hands")]
     
@@ -155,11 +164,11 @@ public class PlayerCharacter : LivingEntities
     public float SwingGrabDelay { get => swingGrabDelay; }
     public float LedgeGrabDelay { get => ledgeGrabDelay; }
     public float SwingSpeed { get => swingSpeed; }
-    public Transform Transform { get => transform; }
+    public Transform Transform { get => transform; set => transform = value; }
     public float SwingCameraSpeed { get => swingCameraSpeed; }
     public float LedgeGrabCameraSpeed { get => ledgeGrabCameraSpeed; }
     public float LedgeGrabLowerSize { get => ledgeGrabLowerSize; }
-    public GrenadeSpawner Grenade { get => grenade; }
+    
     public Dictionary<int, Weapon> WeaponDictonary { get => weaponDictonary; set => weaponDictonary = value; }
     public LayerMask DashLayerMask { get => dashLayerMask; }
     public AudioClip DashAudioClip { get => dashAudioClip; }
@@ -167,13 +176,20 @@ public class PlayerCharacter : LivingEntities
    
     public GameObject Arms { get => arms; }
     public AudioClip LedgeGrabAudioClip { get => ledgeGrabAudioClip; }
-    public AudioClip SwingAudioClip { get => swingAudioClip; }
-    public AudioClip JumpAudioClip { get => jumpAudioClip; }
+
+    
     public Animator LegsAnim { get => legsAnim;  }
     public PlayerDeathState DeathState { get => deathState; set => deathState = value; }
+    public GrenadeSpawner GrenadeSpawner { get => grenadeSpawner; set => grenadeSpawner = value; }
+    public AudioClip DeathAudioClip { get => deathAudioClip; set => deathAudioClip = value; }
+    public PlayerHealth Health { get => health; set => health = value; }
+    public AudioClip[] PickupAudioClips { get => pickupAudioClips; set => pickupAudioClips = value; }
+    public AudioSource PickupAudioSource { get => pickupAudioSource; set => pickupAudioSource = value; }
+    public AudioClip[] JumpAudioClips { get => jumpAudioClips; set => jumpAudioClips = value; }
 
 
     #endregion Properties
+    
     void Start()
     {
         //Cached variables
@@ -183,9 +199,9 @@ public class PlayerCharacter : LivingEntities
         Body = GetComponent<Rigidbody>();
         Collider = GetComponent<CapsuleCollider>();
         transform = GetComponent<Transform>();
-        grenade = GetComponent<GrenadeSpawner>();
+      
         gameManager = GameManager.instance;
-        grenadeSpawner = GetComponent<GrenadeSpawner>();
+        GrenadeSpawner = GetComponent<GrenadeSpawner>();
 
         //States Initialization
         airState = new AirState(this, ArmsAnim);
@@ -200,7 +216,7 @@ public class PlayerCharacter : LivingEntities
 
         //Weapon Initialization
         WeaponDictonary = GetComponentsInChildren<Weapon>().OrderBy(x => x.id).ToDictionary(x => x.id);
-        equipedWeapon = WeaponDictonary[1];
+        equipedWeapon = WeaponDictonary[0];
         foreach (KeyValuePair<int, Weapon> weapon in WeaponDictonary)
         {
             if (weapon.Value != equipedWeapon)
@@ -210,13 +226,17 @@ public class PlayerCharacter : LivingEntities
         //Events
         gameManager.stopFiring += StopFiring;
         gameManager.ResetCameraMovement += StopCameraMovement;
+        
     }
-    
 
+ 
     void Update()
     {
-        //Debug.Log(CurrState.phase);
       CurrState = (PlayerStates)CurrState.Process();
+
+        //if (Input.GetKeyDown("k"))
+        //    TakeDamage(100);
+
     }
     public IEnumerator StartDash()
     {
@@ -224,6 +244,12 @@ public class PlayerCharacter : LivingEntities
         OnDasher();
         yield return new WaitForSeconds(dashCooldown);
         isDashonCooldown = false;
+    }
+    public void StopVelocity()
+    {
+        CurrXMovement = 0;
+        CurrYMovement = 0;
+        CurrZMovement = 0;
     }
     public void StopMovement()
     {
@@ -243,7 +269,6 @@ public class PlayerCharacter : LivingEntities
             equipedWeapon.gameObject.SetActive(false);
             equipedWeapon = weaponDictonary[weaponId];
             equipedWeapon.gameObject.SetActive(true);
-
         }
     }
     public void loseAmmo()
@@ -260,16 +285,23 @@ public class PlayerCharacter : LivingEntities
             {
                 armor.TakeDamage(damage);
             }
-            else if (health.hp > 0)
+            else if (Health.hp > 0)
             {
-                health.TakeDamage(damage);
+                Health.TakeDamage(damage);
             }
-            else if (health.hp <= 0)
+            else if (Health.hp <= 0 && deathState.deathCheck == false)
             {
                 Die();
             }
         }
     }
+    public void PlayAudioClip(AudioClip clip,float volume)
+    {
+        this.AudioSource.volume = volume;
+        if (clip != null)
+            this.AudioSource.PlayOneShot(clip);
+    }
+
     public void Die()
     {
         CurrState.SwitchToPlayerDeathState();
@@ -396,7 +428,7 @@ public class PlayerCharacter : LivingEntities
 
         if (context.started && IsGameplayState())
         {
-            if (Grenade != null)
+            if (GrenadeSpawner != null)
             {
                 currState.Grenade();
             }
@@ -406,9 +438,9 @@ public class PlayerCharacter : LivingEntities
     {
         if(context.started &&IsGameplayState())
         {
-            grenadeSpawner.GrenadeIndex++;
-            if (grenadeSpawner.GrenadeIndex > 3)
-                grenadeSpawner.GrenadeIndex = 0;
+            GrenadeSpawner.GrenadeIndex++;
+            if (GrenadeSpawner.GrenadeIndex > 3)
+                GrenadeSpawner.GrenadeIndex = 0;
         }
     }
 

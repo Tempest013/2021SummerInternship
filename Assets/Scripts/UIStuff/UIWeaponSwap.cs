@@ -38,6 +38,11 @@ public class UIWeaponSwap : MonoBehaviour
         PlayerCharacter.instance.SwapWeapon(4);
         gameManager.CurrState.SwitchToGameplayState();
     }
+    public void SwapWeapon(int value)
+    {
+        PlayerCharacter.instance.SwapWeapon(value);
+        gameManager.CurrState.SwitchToGameplayState();
+    }
     private void TurnOffCombatUI()
     {
         combatUI.SetActive(false);

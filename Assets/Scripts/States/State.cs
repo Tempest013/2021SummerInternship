@@ -18,8 +18,9 @@ public abstract class State
     public void SwitchToShell(State state)
     {
         nextState = state;
-        state.phase = Phase.ENTER;
         phase = Phase.EXIT;
+        state.phase = Phase.ENTER;
+      
     }
 
     public virtual void Update() { phase = Phase.UPDATE; }

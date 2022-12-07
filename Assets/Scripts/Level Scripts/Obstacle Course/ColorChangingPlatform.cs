@@ -7,30 +7,44 @@ public class ColorChangingPlatform : MonoBehaviour
     private MeshRenderer platformRenderer;
 
     protected CourseManager courseManager;
+    protected FloorBreakerPuzzleManager puzzleManager;
 
-    // Start is called before the first frame update
     void Start()
     {
         platformRenderer = this.gameObject.GetComponentInParent<MeshRenderer>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         courseManager = CourseManager.instance;
+        puzzleManager = FloorBreakerPuzzleManager.instance;
+        ResetPlatforms();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
-            if (platformRenderer.material.color != Color.red)
+            if (platformRenderer.material.color != Color.red && courseManager.HasRestarted == false && puzzleManager.IsFloorBreaker == false)
             {
-                Debug.Log("ColorChange");
                 platformRenderer.material.color = Color.red;
                 courseManager.PlatformCounter += 1;
             }
+            else if (puzzleManager.IsFloorBreaker == true)
+            {
+                platformRenderer.material.color = Color.green;
+                puzzleManager.PuzzleCounter += 1;
+            }
+            
          
+        }
+    }
+
+    private void ResetPlatforms()
+    {
+        if(courseManager.HasRestarted == true)
+        {
+            platformRenderer.material.color = Color.white;
         }
     }
 }

@@ -6,13 +6,13 @@ public class AttackState : EnemyState
 {
     public AttackState(EnemyBase enemy, Animator anim) : base(enemy, anim) { }
 
-    private float sTime = 0f;
-    private float delayTime = 0.5f;
     MonoBehaviour mono;
     public override void Enter()
     {
+
+        enemy.PlayAudio(enemy.AttackSFX, .75f);
         base.Enter();
-        enemy.anim.SetTrigger("Attacking");
+        
         
         
     }
@@ -24,7 +24,7 @@ public class AttackState : EnemyState
 
     public override void Exit()
     {
-        enemy.inRange = false;
+        
         base.Exit();
     }
 }

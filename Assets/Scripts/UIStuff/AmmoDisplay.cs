@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,18 +13,22 @@ public class AmmoDisplay : MonoBehaviour
     void Start()
     {
         text = GetComponent<TextMeshProUGUI>();
-        ammo = PlayerCharacter.instance.equipedWeapon.currAmmo;
-        text.text = ammo.ToString();
+
         PlayerCharacter.OnAmmoLoss += OnAmmoChange;
     }
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-
+        ammo = PlayerCharacter.instance.equipedWeapon.currAmmo;
+        if (ammo == 9999)
+            text.text = "∞";
+        else
+            text.text = ammo.ToString();
     }
 
     public void OnAmmoChange()
     {
+        if(PlayerCharacter.instance.equipedWeapon!=null)
         ammo = PlayerCharacter.instance.equipedWeapon.currAmmo;
         text.text = ammo.ToString();
     }

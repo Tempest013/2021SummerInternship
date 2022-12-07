@@ -8,17 +8,25 @@ public abstract class ChargeWeapon : SemiAutomaticWeapon
     [SerializeField] protected bool chargingFlag;
     [SerializeField] protected IEnumerator chargeShot;
     [SerializeField] protected float chargeTime = 0.7f;
-
-
+    [SerializeField] ParticleSystem chargeUpEffect;
+    [SerializeField] ParticleSystem shockWave;
+    [SerializeField] AudioClip chargeClip;
+    [SerializeField]protected AudioSource shotAudioSource;
 
     protected IEnumerator ChargeShot()
     {
         chargingFlag = false;
+        chargeUpEffect.Play();
+        audioSource.Play();
         yield return new WaitForSeconds(chargeTime);
+        chargeUpEffect.Stop();
+        shockWave.Play();
         chargingFlag = true;
+        StopPrimary();
         Fire();
         StartCoroutine(shotCD);
         StartCoroutine(recoilDelay);
+       
     }
 
 
@@ -27,9 +35,10 @@ public abstract class ChargeWeapon : SemiAutomaticWeapon
         chargeShot = ChargeShot();
         shotCD = ShotIsOnCD();
         recoilDelay = RecoilDelay();
-        if (canShoot)
+        if (canShoot && currAmmo > 0)
         {
             StartCoroutine(chargeShot);
+            
         }
     }
 
@@ -41,7 +50,9 @@ public abstract class ChargeWeapon : SemiAutomaticWeapon
     public override void StopPrimary()
     {
         if(chargeShot!=null)
-        StopCoroutine(chargeShot);
+        StopCoroutine(chargeShot); 
+        chargeUpEffect.Stop();
+        audioSource.Stop();
         chargingFlag = false;
     }
 

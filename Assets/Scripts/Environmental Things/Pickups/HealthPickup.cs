@@ -9,11 +9,15 @@ public class HealthPickup : Pickup
     {
         if(other.tag=="Player")
         {
-         
-            Health playerHp = other.GetComponent<PlayerCharacter>().health;
-            playerHp.Heal(Amount);
-           
-            Destroy(gameObject);
+            PlayerCharacter player = other.GetComponent<PlayerCharacter>();
+            Health playerHp = other.GetComponent<PlayerCharacter>().Health;
+            if (playerHp.hp != playerHp.maxHp)
+            {
+                PlaySoundFX(other.GetComponent<PlayerCharacter>(), 0, 1);
+                player.PickupAudioSource.Play();
+                playerHp.Heal(Amount);
+                Destroy(gameObject);
+            }
         }
     }
 }

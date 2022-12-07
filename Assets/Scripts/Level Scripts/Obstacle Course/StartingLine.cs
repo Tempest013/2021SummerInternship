@@ -30,6 +30,7 @@ public class StartingLine : MonoBehaviour
             courseManager.IsStarted = true;
             goText.SetActive(true);
             Invoke("TurnOffGoText", 3.0f);
+            courseManager.HasRestarted = false;
         }
     }
 

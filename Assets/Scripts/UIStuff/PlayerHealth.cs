@@ -14,16 +14,13 @@ public class PlayerHealth : Health
         slider.maxValue = maxHp;
         slider.value = hp;
 
-        PlayerCharacter.instance.health = this;
+        PlayerCharacter.instance.Health = this;
         iFrameSec = PlayerCharacter.instance.IFrameDuration;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown("k"))
-            TakeDamage(12);
-        if (Input.GetKeyDown("l"))
-            Heal(10);
+      
 
     }
 
@@ -45,7 +42,12 @@ public class PlayerHealth : Health
         StartCoroutine(healthAnimator);
     }
 
-    IEnumerator AnimateHealthBar(float sec)
+    public void SetHealthBar(int amount)
+    {
+        slider.value = amount;
+    }
+
+    public IEnumerator AnimateHealthBar(float sec)
     {
         float animTime = 0f;
         while (animTime < sec)

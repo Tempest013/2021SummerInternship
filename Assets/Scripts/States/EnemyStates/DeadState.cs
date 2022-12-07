@@ -8,7 +8,12 @@ public class DeadState : EnemyState
 
     public override void Enter()
     {
-        anim.SetBool("isDead", true);
+        enemy.PlayAudio(enemy.DeathSFX, .75f);
+        enemy.IsDead = true;
+        anim.SetBool("IsDead", true);
+        WaveManager.onEnemyDeath?.Invoke();
+        enemy.TurnOffParticleEffects();
+        enemy.collider.enabled = false;
         base.Enter();
     }
 

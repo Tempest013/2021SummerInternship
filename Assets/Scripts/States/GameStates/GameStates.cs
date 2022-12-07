@@ -33,6 +33,10 @@ public class GameStates : State
     }
     #region SwitchStates
 
+    public void SwitchToMenuState()
+    {
+        SwitchToShell(gamemanager.Menustate);
+    }
     public void SwitchToGameplayState()
     {
         SwitchToShell(gamemanager.GameplayState);
@@ -48,7 +52,6 @@ public class GameStates : State
     }
     public void SwitchToPauseState()
     {
-        //may have a bug here
         gamemanager.PauseState.LastState = this;
         if (gamemanager.PauseState.LastState == gamemanager.WeaponSwapState)
             gamemanager.PauseState.LastState = gamemanager.GameplayState;

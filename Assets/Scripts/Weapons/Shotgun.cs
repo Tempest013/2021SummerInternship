@@ -7,6 +7,7 @@ public class Shotgun : SemiAutomaticWeapon
 
     //private float fireRange = 50f;
     private static int pellets = 20;
+    [SerializeField] private ParticleSystem muzzleFlash;
     //private LineRenderer[] bulletTracer = new LineRenderer[pellets];
     //private float timer = 0.5f;
     //private bool hasFired = false;
@@ -43,6 +44,7 @@ public class Shotgun : SemiAutomaticWeapon
         if (currAmmo > 0)
         {
             audioSource.PlayOneShot(audioClips[0]);
+            muzzleFlash.Play();
             for (int i = 0; i < pellets; i++)
             {
                 projectileType.SpawnFromPool("ShotgunBullet", spawner.transform.position, Quaternion.identity);

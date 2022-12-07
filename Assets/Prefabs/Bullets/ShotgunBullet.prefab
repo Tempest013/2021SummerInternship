@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3654666076619993272}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.4864974, y: -0.32030195, z: -0.2622854}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3654666076619993272}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4300008, guid: cc34ae6a7e465584aa9e4dcc48852048, type: 3}
 --- !u!23 &3654666076619993254
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9a532b241491e9849bffcf98d5690f67, type: 2}
+  - {fileID: 2100000, guid: 1ef9f13312977a647a4c93fed87712db, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96,8 +96,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.7216809
-  m_Center: {x: 0.012571514, y: 0, z: -0.016731247}
+  m_Radius: 0.016351892
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &3654666076619993253
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -113,7 +113,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &8961955307029400830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,4 +127,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletVelocity: 200
-  cam: {fileID: 0}

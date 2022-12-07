@@ -17,8 +17,13 @@ public class AggresiveMeleeState : AggresiveState
     public override void Update()
     {
         enemy.agent.SetDestination(PlayerCharacter.instance.transform.position);
+        if(enemy.agent.isOnOffMeshLink)
+        {
+            SwitchToJumpState();
+        }
         if (enemy.inRange == true)
         {
+            enemy.agent.SetDestination(enemy.gameObject.transform.position);
             SwitchToAttackState();
         }
         
@@ -30,7 +35,8 @@ public class AggresiveMeleeState : AggresiveState
 
     public override void Exit()
     {
-        base.Exit();
+        enemy.agent.SetDestination(enemy.transform.position);
         enemy.anim.SetBool("isMoving", false);
+        base.Exit();
     }
 }

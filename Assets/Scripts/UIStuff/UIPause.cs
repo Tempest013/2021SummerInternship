@@ -5,7 +5,7 @@ using UnityEngine;
 public class UIPause : MonoBehaviour
 {
     [SerializeField] private GameObject pauseUI;
-
+    [SerializeField] private GameObject optionsUI;
 
 
     void Start()
@@ -22,6 +22,7 @@ public class UIPause : MonoBehaviour
     private void TurnOffPauseUI()
     {
         pauseUI.SetActive(false);
+        optionsUI.SetActive(false);
     }
     private void TurnOnPauseUI()
     {

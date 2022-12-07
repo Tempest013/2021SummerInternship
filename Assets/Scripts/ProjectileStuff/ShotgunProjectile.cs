@@ -7,7 +7,7 @@ public class ShotgunProjectile : Projectiles
     public ShotgunProjectile() : base()
     {
         bulletVelocity = 200f;
-        projDamage = 3;
+        projDamage = 5;
     }
 
     public override void OnObjectSpawn()

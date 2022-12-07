@@ -18,10 +18,13 @@ public class IdleState : EnemyState
 
     public override void Update()
     {
-        if(25f > Vector3.Distance(PlayerCharacter.instance.transform.position, enemy.transform.position))
+        if (PlayerCharacter.instance != null)
         {
-            SwitchToAggresiveState();
-            
+            if (25f > Vector3.Distance(PlayerCharacter.instance.transform.position, enemy.transform.position))
+            {
+                SwitchToAggresiveState();
+
+            }
         }
 
     }

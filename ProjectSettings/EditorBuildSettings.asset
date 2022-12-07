@@ -6,18 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/TestScene.unity
-    guid: 8a391317c353c7d48b1a51e2de971b40
-  - enabled: 1
-    path: Assets/Scenes/TrainingScene.unity
-    guid: 0bab2e2de03fd7140a8ee969ec5131f5
-  - enabled: 1
-    path: Assets/Scenes/NianTRALALALAScene.unity
-    guid: 317a57f799ef7124887b40e887b02202
+    path: Assets/Scenes/CoreScene.unity
+    guid: f4478c78d2fe69c4598aea7e62721a2c
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: caab7e0160bde274e9df4ec69ff50e76
   - enabled: 1
-    path: Assets/Scenes/LoadingScene.unity
-    guid: c7f964cb8a94c7541aeefcb96f98c8b6
+    path: Assets/Scenes/Levels/1st Level.unity
+    guid: 3e833ee4ee56b4345b4c68155110ed52
+  - enabled: 1
+    path: Assets/Scenes/Levels/2nd Level.unity
+    guid: a57fd344404561a469981cedd8160888
   m_configObjects: {}

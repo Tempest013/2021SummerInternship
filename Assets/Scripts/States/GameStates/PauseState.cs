@@ -12,7 +12,7 @@ public class PauseState :GameStates
     {
 
         gamemanager.Player.StopCameraMovement();
-
+        gamemanager.ChangeMusicVolume(.5f);
         Time.timeScale = 0;
         UnlockCursor();
         gamemanager.stopFiring?.Invoke();
@@ -26,6 +26,7 @@ public class PauseState :GameStates
     }
     public override void Exit()
     {
+        gamemanager.ChangeMusicVolume(1);
         Time.timeScale = 1;
         gamemanager.onTurnOffPauseUI?.Invoke();
         base.Exit();

@@ -7,7 +7,7 @@ public class EnemyRangeProjectile : Projectiles
 
     public EnemyRangeProjectile() : base()
     {
-        bulletVelocity = 50f;
+        bulletVelocity = 100f;
         projDamage = 25;
     }
 
@@ -15,19 +15,14 @@ public class EnemyRangeProjectile : Projectiles
     {
         Vector3 direction = PlayerCharacter.instance.gameObject.transform.position - this.gameObject.transform.position;
         body.velocity = (direction.normalized * bulletVelocity);
-        Debug.Log("Spawned");
     }
 
-    public void OnTriggerEnter(Collider other)
+    protected override void OnCollisionEnter(Collision collision)
     {
-        if (other.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player")
         {
             PlayerCharacter.instance.TakeDamage(25);
         }
         this.gameObject.SetActive(false);
-    }
-    protected override void OnCollisionEnter(Collision collision)
-    {
-
     }
 }

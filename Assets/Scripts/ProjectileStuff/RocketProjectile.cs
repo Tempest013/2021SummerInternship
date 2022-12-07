@@ -24,10 +24,13 @@ public class RocketProjectile : Projectiles
         Collider[] hitColliders = Physics.OverlapSphere(this.transform.position, boomRadius, enemyLayer);
         foreach(Collider hitCollider in hitColliders)
         {
-            Debug.Log("Hit");
+           if(hitCollider.gameObject.tag=="Enemy")
             hitCollider.gameObject.GetComponent<EnemyBase>().health.TakeDamage(projDamage);
         }
+
+        // WILL NEED TO CHANGE THIS TO DELETE THE PARTICLE EFFECTS
         Instantiate(explosion, this.transform.position, Quaternion.identity);
+
         this.gameObject.SetActive(false);
         //base.OnCollisionEnter(collision);
     }

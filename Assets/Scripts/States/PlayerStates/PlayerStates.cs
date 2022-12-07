@@ -48,7 +48,7 @@ public class PlayerStates : State
     protected Vector3 SetHandPosLedgeGrab(float positionY)
     {
         Vector3 pos = player.Arms.transform.localPosition;
-        player.Arms.transform.position += (player.transform.forward.normalized / 2.25f);
+        player.Arms.transform.position +=  (player.transform.forward.normalized / 2.25f);
         return pos;
     }
     protected Vector3 SetHandPosSwing(Vector3 newPos)
@@ -61,7 +61,7 @@ public class PlayerStates : State
     protected Vector3 SetHandPosDeath()
     {
         Vector3 pos = player.Arms.transform.localPosition;
-        player.Arms.transform.position =  player.transform.forward / 2 ;
+        player.Arms.transform.position +=  player.transform.forward.normalized / 2 ;
         return pos;
     }
     protected void SetArmsPosSwing(Vector3 position, Transform armsParent, Quaternion armsRotation)
@@ -74,32 +74,7 @@ public class PlayerStates : State
     {
         player.Arms.transform.localPosition = position;
     }
-    //FUCKING FAILURE
-    //protected void SetIKValuesForHands(Vector3 positition)
-    //{
-    //    player.Anim.SetLookAtWeight(1);
-    //    player.Anim.SetLookAtPosition(positition);
-
-
-
-    //    player.Anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
-    //    player.Anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
-    //    player.Anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
-    //    player.Anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
-
-    //    player.Anim.SetIKPosition(AvatarIKGoal.RightHand, positition + player.transform.right.normalized + (player.transform.forward.normalized * 2));
-    //    player.Anim.SetIKPosition(AvatarIKGoal.LeftHand, positition - player.transform.right.normalized + (player.transform.forward.normalized * 2));
-
-    //}
-
-    //protected void RemoveIKValues()
-    //{
-    //    player.Anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
-    //    player.Anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 0);
-    //    player.Anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
-    //    player.Anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
-    //    player.Anim.SetLookAtWeight(0);
-    //}
+    
     public virtual void CameraControls()
     {
         player.RotationOnX -= player.MouseLook.y;
@@ -173,6 +148,12 @@ public class PlayerStates : State
         player.equipedWeapon.gameObject.SetActive(false);
         player.ArmsAnim.SetTrigger(animState);
     }
+    protected void EnterAnimStateReenableGunTrigger(string animState)
+    {
+
+        player.equipedWeapon.gameObject.SetActive(true);
+        player.ArmsAnim.SetTrigger(animState);
+    }
     protected void EnableGun()
     {
         player.equipedWeapon.gameObject.SetActive(true);
@@ -196,7 +177,8 @@ public class PlayerStates : State
     public virtual void Jump()
     {
         player.CurrZMovement = player.JumpForce;
-
+        if (player.CurrState != player.AirState)
+            player.PlayAudioClip(player.JumpAudioClips[Random.Range(0, player.JumpAudioClips.Length -1)],1);
     }
     public virtual void Melee()
     {
@@ -205,7 +187,7 @@ public class PlayerStates : State
     }
     public virtual void Grenade()
     {
-        player.Grenade.ThrowGrenade();
+        player.GrenadeSpawner.ThrowGrenade();
     }
 
     #region StateSwitches

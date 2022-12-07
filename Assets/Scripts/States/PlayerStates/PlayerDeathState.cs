@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerDeathState :PlayerStates
+public class PlayerDeathState : PlayerStates
 {
 
-   
+
     private float timeToMenu = 2f;
     public PlayerDeathState(PlayerCharacter player, Animator anim) : base(player, anim) { }
 
     private Vector3 originalHandPos;
+    public bool deathCheck = false;
 
     #region EmptyOverrides
     public override void Move() { }
@@ -23,7 +24,7 @@ public class PlayerDeathState :PlayerStates
     public override void AltFire() { }
     public override void StopAltFire() { }
     public override void Melee() { }
- 
+
     #endregion EmptyOverrides
 
     public IEnumerator startDeathMenu()
@@ -33,26 +34,34 @@ public class PlayerDeathState :PlayerStates
     }
     public override void Enter()
     {
-        //EnterAnimStateDisableGunTrigger("isDead");
-        originalHandPos = SetHandPosDeath();
+        EnterAnimStateDisableGunTrigger("isDead");
+        player.PlayAudioClip(player.DeathAudioClip, 1f);
+       originalHandPos = SetHandPosDeath();
         anim.SetTrigger("isDead");
-        player.StartCoroutine(startDeathMenu());
+        if (!deathCheck)
+        {
+            player.StartCoroutine(startDeathMenu());
+            deathCheck = true;
+        }
         base.Enter();
     }
 
     public override void Exit()
     {
-        player.Arms.transform.localPosition = originalHandPos;
+       player.Arms.transform.localPosition = originalHandPos;
+        EnterAnimStateReenableGunTrigger("IsAlive");
+        deathCheck = false;
+        
         base.Exit();
     }
 
-  
+
 
     public override void Update()
     {
-       
-       
+
+
     }
 
-   
+
 }

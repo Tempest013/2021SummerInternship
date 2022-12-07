@@ -21,8 +21,8 @@ public class LedgeGrabState : PlayerStates
     public override void Enter()
     {
         EnterAnimStateDisableGunBool("isClimbing");
-     
-        originalArmsPos=SetHandPosLedgeGrab(pointToClimbTo.y-player.Collider.height);
+        player.PlayAudioClip(player.LedgeGrabAudioClip,1f);
+        originalArmsPos =SetHandPosLedgeGrab(pointToClimbTo.y-player.Collider.height);
         currentlyFiring = SaveWasFiring(currentlyFiring);
         CreatePath();
         CameraFocus();
@@ -84,5 +84,7 @@ public class LedgeGrabState : PlayerStates
     public override void StopAltFire() { base.StopAltFire(); }
     public override void Jump() { }
     public override void Melee() { }
+    public override void Grenade() { }
+  
     #endregion EmptyOverrides
 }

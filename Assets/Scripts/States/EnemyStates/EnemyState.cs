@@ -2,15 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-/// <summary>
-/// states for now
-/// aggresive state
-/// idle state
-/// </summary>
 
 
 public class EnemyState : State
 {
+    protected bool RangedAttacked = false;
 
     protected EnemyBase enemy;
     protected Animator anim;
@@ -42,6 +38,26 @@ public class EnemyState : State
     public void SwitchToDeadState()
     {
         SwitchToShell(enemy.DeadedState);
+    }
+
+    public void SwitchToJumpState()
+    {
+        SwitchToShell(enemy.JumpState);
+    }
+
+    public void SwitchToBurnState()
+    {
+        SwitchToShell(enemy.BurnState);
+    }
+
+    public void SwitchToFrozenState()
+    {
+        SwitchToShell(enemy.FrozenState);
+    }
+
+    public void SwitchToPoisonState()
+    {
+        SwitchToShell(enemy.PoisonState);
     }
 
 }

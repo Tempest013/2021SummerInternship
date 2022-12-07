@@ -13,5 +13,11 @@ public class DeathState : GameStates
         base.Enter();
     }
 
+    public override void Exit()
+    {
+        gamemanager.onTurnOffDeathUI?.Invoke();
+        base.Exit();
+    }
+
 
 }

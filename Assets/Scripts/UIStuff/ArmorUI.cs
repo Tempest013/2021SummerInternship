@@ -45,6 +45,11 @@ public class ArmorUI : MonoBehaviour
         StartCoroutine(armorAnimator);
     }
 
+    public void SetArmorBar(int amount)
+    {
+        slider.value = amount;
+    }
+
     IEnumerator AnimateArmorBar(float sec)
     {
         float animTime = 0f;

@@ -11,6 +11,8 @@ TagManager:
   - Test
   - DeathZone
   - ColorChangingPlatform
+  - PlayerEyes
+  - Swing
   layers:
   - Default
   - TransparentFX
@@ -25,8 +27,8 @@ TagManager:
   - Pickup
   - PlayerCanSee
   - PlayerCantSee
-  - 
-  - 
+  - FireEffects
+  - EnemyBullet
   - 
   - 
   - 

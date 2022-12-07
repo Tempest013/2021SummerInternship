@@ -589,6 +589,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 12b53037496ca0c4ea4b311610d5fa21, type: 3}
   recoilFlag: 0
   recoilTime: 0.35
+  muzzleFlash: {fileID: 0}
 --- !u!82 &-5933342036170662184
 AudioSource:
   m_ObjectHideFlags: 0
@@ -598,7 +599,7 @@ AudioSource:
   m_GameObject: {fileID: 7196007914679963684}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 5965573859171487704, guid: 5d75245f6cad8fe48a5a49ac04247498, type: 2}
+  OutputAudioMixerGroup: {fileID: 134590630859061554, guid: 5d75245f6cad8fe48a5a49ac04247498, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.75

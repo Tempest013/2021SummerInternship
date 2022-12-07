@@ -20,6 +20,12 @@ public class CourseManager : MonoBehaviour
     [Header("Obstacle Course Variables")]
     [SerializeField] private int totalPlatforms;
     [SerializeField] private bool isStarted;
+    [SerializeField] private bool isFinished;
+    [SerializeField] private bool hasRestarted;
+
+    [Header("Countdown Timer Variables")]
+    [SerializeField] private float time = 70f;
+    [SerializeField] private TextMeshProUGUI timerText; 
 
     [Header("Obstacle Course Assets")]
     [SerializeField] private GameObject finalDoor;
@@ -34,6 +40,8 @@ public class CourseManager : MonoBehaviour
     #region refactoring
     public int PlatformCounter { get => platformCounter; set => platformCounter = value; }
     public bool IsStarted { get => isStarted; set => isStarted = value; }
+    public bool HasRestarted { get => hasRestarted; set => hasRestarted = value; }
+    public bool IsFinished { get => isFinished; set => isFinished = value; }
 
     #endregion refactoring
 
@@ -54,6 +62,8 @@ public class CourseManager : MonoBehaviour
         StartTimeTrial();
         UpdateCounter();
         OpenDoor();
+        ResetCounter();
+        EndTimeTrial();
     }
 
     private void UpdateCounter()
@@ -63,7 +73,7 @@ public class CourseManager : MonoBehaviour
 
     private void OpenDoor()
     {
-        if(platformCounter == totalPlatforms)
+        if(platformCounter == totalPlatforms && time > 0)
         {
             finalDoor.SetActive(false);
         }
@@ -74,6 +84,47 @@ public class CourseManager : MonoBehaviour
         if (isStarted == true)
         {
             canvas.SetActive(true);
+            CountdownTimer();
         }
     }
+
+    private void EndTimeTrial()
+    {
+        if (isFinished == true)
+        {
+            canvas.SetActive(false);
+        }
+    }
+
+    private void ResetCounter()
+    {
+        if(hasRestarted == true)
+        {
+            platformCounter = 0;
+            time = 70.00f;
+            canvas.SetActive(false);
+        }
+    }
+
+    private void CountdownTimer()
+    {
+        if(time > 0)
+        {
+            time -= Time.deltaTime;
+            //timerText.text = time.ToString("0");
+            DisplayTime(time);
+        }
+       
+    }
+
+    void DisplayTime(float timeToDisplay)
+    {
+        timeToDisplay += 1;
+
+        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
+        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+
+        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
 }

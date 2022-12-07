@@ -12,16 +12,19 @@ public class EnemyMelee : EnemyBase
 
     public BoxCollider meleeHitRange;
 
-    void Start()
+    public void Start()
     {
+        base.Start();
         
         AggresiveState = new AggresiveMeleeState(this,anim);
 
-        IdleState = new IdleState(this, anim);
-
         AttackingState = new AttackMeleeState(this, anim);
 
+        IdleState = new IdleState(this, anim);
+
         DeadedState = new DeadState(this, anim);
+
+        JumpState = new JumpState(this, anim);
 
         meleeHitRange = this.GetComponentInChildren<BoxCollider>();
 
@@ -32,7 +35,6 @@ public class EnemyMelee : EnemyBase
     void Update()
     {
         currState = (EnemyState)currState.Process();
-       // Debug.Log(currState);
     }
 
 
@@ -57,7 +59,10 @@ public class EnemyMelee : EnemyBase
 
     private void OnTriggerExit(Collider other)
     {
-        
+        if(other.gameObject.tag == "Player")
+        {
+            inRange = false;
+        }
     }
 
 

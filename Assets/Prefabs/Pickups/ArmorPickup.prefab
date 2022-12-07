@@ -86,7 +86,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 0.8
   bobbingHeight: 0.0015
-  amount: 15
+  amount: 30
 --- !u!1001 &1632225227
 PrefabInstance:
   m_ObjectHideFlags: 0

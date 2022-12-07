@@ -8,6 +8,7 @@ public class WeaponPickup : AmmoPickup
     {
         if (other.tag == "Player")
         {
+            PlaySoundFX(other.GetComponent<PlayerCharacter>(), 0, 1);
             Weapon weapon;
             weapon = other.GetComponent<PlayerCharacter>().WeaponDictonary[weaponId];
             weapon.unlocked = true;

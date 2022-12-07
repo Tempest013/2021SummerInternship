@@ -8,25 +8,30 @@ ModelImporter:
     second: mixamo.com
   externalObjects:
   - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: skeletonZombie_Material
+    second: {fileID: 2100000, guid: 0fb0be3fa18872746869442d39410011, type: 2}
+  - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: skeletonZombie_diffuse
-    second: {fileID: 2800000, guid: 94917b80194e6024796ff2d31c322ee3, type: 3}
+    second: {fileID: 2800000, guid: dc5e8c8a2560d28408ec1624ac932e33, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: skeletonZombie_glow
-    second: {fileID: 2800000, guid: 38e1de03c544e5a4ba867819f29fd819, type: 3}
+    second: {fileID: 2800000, guid: c7251e78580b3464a8f81f195b301172, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: skeletonZombie_normal
-    second: {fileID: 2800000, guid: 9bffffb03f0c3f44baab702fb8885328, type: 3}
+    second: {fileID: 2800000, guid: 8c8d7214383f2264482bcac66afdeef3, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: skeletonZombie_specular
-    second: {fileID: 2800000, guid: 2c5fa2dc5199fdb40854c9b1ce19af18, type: 3}
+    second: {fileID: 2800000, guid: 0ccf7ee302417a74ebac26a718e14445, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

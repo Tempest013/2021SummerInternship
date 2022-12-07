@@ -14,15 +14,20 @@ public class DashState : PlayerStates
         player.StartCoroutine(player.StartDash());
         stopDash = StopDash();
         player.StartCoroutine(stopDash);
+        DetermineDirection();
+        player.PlayAudioClip(player.DashAudioClip,1);
+        base.Enter();
+    }
+
+    private void DetermineDirection()
+    {
         if (player.XMovement == 0 && player.YMovement == 0)
             direction = player.transform.forward;
         else
             direction = player.transform.right * player.CurrXMovement + player.transform.forward * player.CurrYMovement;
         direction = direction.normalized;
-        if(player.DashAudioClip!=null)
-        player.AudioSource.PlayOneShot(player.DashAudioClip);
-        base.Enter();
     }
+
 
     public override void Update()
     {
